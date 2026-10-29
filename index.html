@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カタカナ学習ドリル</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@500;700&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        .font-kiwi {
+            font-family: 'Kiwi Maru', serif;
+        }
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-bounce-gentle {
+            animation: bounce-gentle 2s infinite ease-in-out;
+        }
+        @keyframes pulse-shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-4px); }
+            40%, 80% { transform: translateX(4px); }
+        }
+        .animate-shake {
+            animation: pulse-shake 0.4s ease-in-out;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 0 0 rgba(0, 0, 0, 0.1);
+        }
+        .card-shadow:active {
+            box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
+            transform: translateY(3px);
+        }
+    </style>
+</head>
+<body class="bg-emerald-50 min-h-screen text-slate-800 flex flex-col justify-between overflow-x-hidden">
+
+    <!-- Header (Always Visible except screen 1) -->
+    <header id="main-header" class="hidden w-full bg-emerald-500 p-3 sm:p-4 shadow-md flex justify-between items-center max-w-3xl mx-auto rounded-b-2xl">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl sm:text-3xl">📖</span>
+            <h1 class="text-lg sm:text-xl font-black text-white tracking-wider">カタカナドリル</h1>
+        </div>
+        <div class="flex items-center gap-2">
+            <!-- Score / Stars -->
+            <div class="bg-white/90 border-2 border-emerald-300 rounded-full px-3 py-1 flex items-center gap-1 shadow-inner">
+                <span class="text-xl">⭐</span>
+                <span id="star-count" class="text-lg font-bold text-emerald-800">0</span>
+            </div>
+            <!-- Back to Course Selection Button -->
+            <button onclick="showScreen('screen-course')" class="bg-emerald-100 hover:bg-white text-emerald-900 font-bold px-3 py-1 rounded-xl text-xs sm:text-sm border border-emerald-300 shadow transition">
+                🏡 もどる
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-2xl w-full mx-auto p-4 flex flex-col justify-center items-center">
+
+        <!-- SCREEN 1: Top Start Page -->
+        <section id="screen-start" class="w-full flex flex-col items-center justify-center gap-6 text-center my-auto">
+            <div class="bg-white border-4 border-emerald-300 rounded-3xl p-8 shadow-xl w-full flex flex-col items-center gap-4">
+                <div class="text-5xl animate-bounce-gentle">✏️📖</div>
+                <h1 class="text-2xl sm:text-3xl font-black text-emerald-800 font-kiwi">
+                    カタカナ ならべかえ<br>ドリル
+                </h1>
+                <p class="text-slate-600 text-sm font-bold">
+                    たのしく カタカナ の べんきょう を しよう！
+                </p>
+            </div>
+
+            <button onclick="showScreen('screen-course')" class="w-full max-w-xs bg-emerald-500 hover:bg-emerald-600 text-white font-black text-2xl py-4 px-8 rounded-3xl shadow-lg border-b-4 border-emerald-700 transition transform active:scale-95 flex items-center justify-center gap-2">
+                ▶ スタート！
+            </button>
+        </section>
+
+        <!-- SCREEN 2: Course Selection -->
+        <section id="screen-course" class="hidden w-full flex flex-col items-center justify-center gap-5 my-auto">
+            <div class="text-center">
+                <h2 class="text-xl sm:text-2xl font-black text-emerald-900 mb-1">コース を えらんでね</h2>
+                <p class="text-xs sm:text-sm text-slate-600 font-bold">じぶんに あった もんだい に ちょうせん しよう！</p>
+            </div>
+
+            <!-- Kame Course -->
+            <button onclick="startKameCourse()" class="w-full bg-white hover:bg-amber-50 border-4 border-amber-300 rounded-3xl p-5 shadow-lg flex items-center gap-4 text-left transition transform active:scale-95">
+                <div class="text-5xl bg-amber-100 p-3 rounded-2xl">🐢</div>
+                <div class="flex-1">
+                    <div class="text-amber-800 font-black text-xl sm:text-2xl">かめさん コース</div>
+                    <div class="text-slate-600 text-xs sm:text-sm font-bold mt-1">ひらがな 1つ に あう カタカナ を えらぼう！</div>
+                </div>
+                <div class="text-amber-500 text-2xl">▶</div>
+            </button>
+
+            <!-- Usagi Course -->
+            <button onclick="startUsagiCourse()" class="w-full bg-white hover:bg-sky-50 border-4 border-sky-300 rounded-3xl p-5 shadow-lg flex items-center gap-4 text-left transition transform active:scale-95">
+                <div class="text-5xl bg-sky-100 p-3 rounded-2xl">🐇</div>
+                <div class="flex-1">
+                    <div class="text-sky-800 font-black text-xl sm:text-2xl">うさぎさん コース</div>
+                    <div class="text-slate-600 text-xs sm:text-sm font-bold mt-1">ことば の カタカナ を 正しい じゅんばん に ならべよう！</div>
+                </div>
+                <div class="text-sky-500 text-2xl">▶</div>
+            </button>
+        </section>
+
+        <!-- SCREEN 3: Kame Course (Single Character Choice) -->
+        <section id="screen-kame" class="hidden w-full flex flex-col items-center justify-center gap-6">
+            <div class="bg-white border-4 border-amber-300 rounded-3xl p-6 shadow-xl w-full text-center flex flex-col items-center">
+                <div class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-3">
+                    🐢 かめさん コース（1もじ）
+                </div>
+                <div class="text-slate-500 text-xs sm:text-sm font-bold mb-2">この ひらがな の カタカナ は どれかな？</div>
+                
+                <div class="flex items-center justify-center gap-3 my-2">
+                    <div id="kame-hiragana" class="text-6xl sm:text-7xl font-black text-amber-600 font-kiwi py-2">
+                        あ
+                    </div>
+                    <button onclick="speakText(currentKameTarget.hiragana)" class="bg-amber-100 hover:bg-amber-200 active:bg-amber-300 text-amber-900 border-2 border-amber-300 font-bold px-3 py-2 rounded-2xl text-base shadow transition transform active:scale-95 flex items-center gap-1">
+                        🔊 きく
+                    </button>
+                </div>
+            </div>
+
+            <!-- Choice Options -->
+            <div id="kame-options-container" class="grid grid-cols-3 gap-3 sm:gap-4 w-full">
+                <!-- Choice buttons generated via JS -->
+            </div>
+
+            <div id="kame-message-box" class="h-8 text-center text-lg sm:text-xl font-bold"></div>
+        </section>
+
+        <!-- SCREEN 4: Usagi Course (Word Reordering) -->
+        <section id="screen-usagi" class="hidden w-full flex flex-col items-center justify-center gap-5">
+            <!-- Word Card Display -->
+            <div class="bg-white border-4 border-sky-300 rounded-3xl p-5 shadow-xl w-full text-center relative flex flex-col items-center">
+                <div id="usagi-badge" class="absolute top-3 left-4 bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full">
+                    🐇 うさぎさん コース
+                </div>
+                <div class="text-slate-400 text-xs font-bold mt-5 mb-1">ひらがな を カタカナ に なおそう！</div>
+                <div class="flex items-center justify-center gap-3 my-1 flex-wrap">
+                    <span id="usagi-emoji" class="text-4xl sm:text-5xl animate-bounce-gentle">🐼</span>
+                    <div id="usagi-hiragana" class="text-4xl sm:text-5xl font-black text-sky-600 font-kiwi">
+                        ぱんだ
+                    </div>
+                    <button onclick="speakText(currentUsagiWord.hiragana)" class="bg-sky-100 hover:bg-sky-200 active:bg-sky-300 text-sky-800 border-2 border-sky-300 font-bold px-3 py-1.5 rounded-2xl text-sm shadow transition transform active:scale-95 flex items-center gap-1">
+                        🔊 きく
+                    </button>
+                </div>
+            </div>
+
+            <!-- Drop Target Area -->
+            <div class="w-full flex flex-col items-center gap-1">
+                <div class="text-xs font-bold text-slate-600">ここに カード を ならべてね</div>
+                <div id="usagi-slots-container" class="flex flex-wrap justify-center gap-2 p-3 bg-sky-100 rounded-2xl w-full min-h-[80px] items-center">
+                    <!-- Drop Slots -->
+                </div>
+            </div>
+
+            <!-- Source Cards Area -->
+            <div class="w-full flex flex-col items-center gap-1">
+                <div class="text-xs font-bold text-slate-600">カード を タップ して うごかそう</div>
+                <div id="usagi-source-container" class="flex flex-wrap justify-center gap-2 p-3 bg-white/80 border-2 border-dashed border-sky-300 rounded-2xl w-full min-h-[85px] items-center">
+                    <!-- Katakana Source Cards -->
+                </div>
+            </div>
+
+            <!-- Controls & Messages -->
+            <div class="w-full flex flex-col items-center gap-2">
+                <div id="usagi-message-box" class="h-6 text-center text-base sm:text-lg font-bold"></div>
+                <div class="flex gap-3">
+                    <button onclick="resetUsagiWord()" class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-slate-700 font-bold px-4 py-2 rounded-2xl shadow transition">
+                        🔄 やりなおす
+                    </button>
+                    <button onclick="checkUsagiAnswer()" class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-extrabold px-6 py-2 rounded-2xl text-base shadow-md transition transform active:scale-95">
+                        ✨ こたえあわせ
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-2 text-emerald-800/60 text-xs font-bold">
+        カタカナ ドリル - たのしく まなおう！
+    </footer>
+
+    <!-- JavaScript Engine -->
+    <script>
+        // Single Character Mapping Data (Kame Course)
+        const singleCharData = [
+            { hiragana: 'あ', katakana: 'ア', dummy: ['イ', 'ウ', 'エ'] },
+            { hiragana: 'い', katakana: 'イ', dummy: ['ア', 'オ', 'カ'] },
+            { hiragana: 'う', katakana: 'ウ', dummy: ['ワ', 'ラ', 'フ'] },
+            { hiragana: 'え', katakana: 'エ', dummy: ['コ', 'ニ', '工'] },
+            { hiragana: 'お', katakana: 'オ', dummy: ['ホ', 'ハ', 'ナ'] },
+            { hiragana: 'か', katakana: 'カ', dummy: ['力', 'キ', 'ク'] },
+            { hiragana: 'き', katakana: 'キ', dummy: ['サ', 'ミ', 'チ'] },
+            { hiragana: 'く', katakana: 'ク', dummy: ['ワ', 'タ', 'ケ'] },
+            { hiragana: 'け', katakana: 'ケ', dummy: ['ク', 'コ', 'セ'] },
+            { hiragana: 'こ', katakana: 'コ', dummy: ['ユ', 'ヨ', 'ニ'] },
+            { hiragana: 'さ', katakana: 'サ', dummy: ['シ', 'セ', 'ソ'] },
+            { hiragana: 'し', katakana: 'シ', dummy: ['ツ', 'ソ', 'ン'] },
+            { hiragana: 'す', katakana: 'ス', dummy: ['ヌ', 'フ', 'ラ'] },
+            { hiragana: 'せ', katakana: 'セ', dummy: ['ヒ', 'ヤ', 'モ'] },
+            { hiragana: 'そ', katakana: 'ソ', dummy: ['ン', 'リ', 'ツ'] },
+            { hiragana: 'た', katakana: 'タ', dummy: ['ク', 'ヌ', 'ナ'] },
+            { hiragana: 'ち', katakana: 'チ', dummy: ['テ', 'ナ', 'テ'] },
+            { hiragana: 'つ', katakana: 'ツ', dummy: ['シ', 'ソ', 'シ'] },
+            { hiragana: 'て', katakana: 'テ', dummy: ['チ', 'ラ', 'ナ'] },
+            { hiragana: 'と', katakana: 'ト', dummy: ['イ', '上', 'セ'] },
+            { hiragana: 'な', katakana: 'ナ', dummy: ['メ', 'ヤ', 'メ'] },
+            { hiragana: 'に', katakana: 'ニ', dummy: ['三', 'コ', 'ミ'] },
+            { hiragana: 'ぬ', katakana: 'ヌ', dummy: ['ス', 'マ', 'フ'] },
+            { hiragana: 'ね', katakana: 'ネ', dummy: ['ホ', 'ヌ', 'オ'] },
+            { hiragana: 'の', katakana: 'ノ', dummy: ['ソ', 'ヘ', 'メ'] },
+            { hiragana: 'は', katakana: 'ハ', dummy: ['八', 'ル', 'フ'] },
+            { hiragana: 'ひ', katakana: 'ヒ', dummy: ['セ', 'ピ', 'モ'] },
+            { hiragana: 'ふ', katakana: 'フ', dummy: ['ワ', 'ラ', 'ウ'] },
+            { hiragana: 'へ', katakana: 'ヘ', dummy: ['く', 'ノ', 'ハ'] },
+            { hiragana: 'ほ', katakana: 'ホ', dummy: ['木', 'ネ', 'オ'] },
+            { hiragana: 'ま', katakana: 'マ', dummy: ['ム', 'ア', 'ヤ'] },
+            { hiragana: 'み', katakana: 'ミ', dummy: ['三', 'シ', 'キ'] },
+            { hiragana: 'む', katakana: 'ム', dummy: ['マ', 'ラ', 'セ'] },
+            { hiragana: 'め', katakana: 'メ', dummy: ['ヌ', 'ノ', 'ナ'] },
+            { hiragana: 'も', katakana: 'モ', dummy: ['セ', '毛', 'テ'] },
+            { hiragana: 'や', katakana: 'ヤ', dummy: ['セ', 'マ', 'サ'] },
+            { hiragana: 'ゆ', katakana: 'ユ', dummy: ['コ', 'ヨ', 'ゴ'] },
+            { hiragana: 'よ', katakana: 'ヨ', dummy: ['ユ', 'コ', 'ロ'] },
+            { hiragana: 'ら', katakana: 'ラ', dummy: ['フ', 'ウ', 'テ'] },
+            { hiragana: 'り', katakana: 'リ', dummy: ['ソ', 'イ', 'ル'] },
+            { hiragana: 'る', katakana: 'ル', dummy: ['レ', 'ハ', 'フ'] },
+            { hiragana: 'れ', katakana: 'レ', dummy: ['ル', 'ワ', 'フ'] },
+            { hiragana: 'ろ', katakana: 'ロ', dummy: ['コ', '口', 'ヨ'] },
+            { hiragana: 'わ', katakana: 'ワ', dummy: ['ウ', 'ク', 'フ'] },
+            { hiragana: 'ん', katakana: 'ン', dummy: ['ソ', 'シ', 'ツ'] }
+        ];
+
+        // Word Reordering Data (Usagi Course)
+        const wordData = [
+            { hiragana: 'ぱんだ', katakana: ['パ', 'ン', 'ダ'], emoji: '🐼' },
+            { hiragana: 'らいおん', katakana: ['ラ', 'イ', 'オ', 'ン'], emoji: '🦁' },
+            { hiragana: 'ごりら', katakana: ['ゴ', 'リ', 'ラ'], emoji: '🦍' },
+            { hiragana: 'きりん', katakana: ['キ', 'リ', 'ン'], emoji: '🦒' },
+            { hiragana: 'ぺんぎん', katakana: ['ペ', 'ン', 'ギ', 'ン'], emoji: '🐧' },
+            { hiragana: 'ばなな', katakana: ['バ', 'ナ', 'ナ'], emoji: '🍌' },
+            { hiragana: 'けーき', katakana: ['ケ', 'ー', 'キ'], emoji: '🍰' },
+            { hiragana: 'りんご', katakana: ['リ', 'ン', 'ゴ'], emoji: '🍎' },
+            { hiragana: 'とまと', katakana: ['ト', 'マ', 'ト'], emoji: '🍅' },
+            { hiragana: 'ばす', katakana: ['バ', 'ス'], emoji: '🚌' },
+            { hiragana: 'たくしー', katakana: ['タ', 'ク', 'シ', 'ー'], emoji: '🚕' },
+            { hiragana: 'とらっく', katakana: ['ト', 'ラ', 'ッ', 'ク'], emoji: '🚚' }
+        ];
+
+        // Global States
+        let starCount = 0;
+        let audioCtx = null;
+
+        // Kame Course States
+        let kameIndex = 0;
+        let currentKameTarget = null;
+
+        // Usagi Course States
+        let usagiIndex = 0;
+        let currentUsagiWord = null;
+        let usagiSelectedSlots = [];
+        let usagiRemainingTiles = [];
+
+        // Navigation Controller
+        function showScreen(screenId) {
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-course').classList.add('hidden');
+            document.getElementById('screen-kame').classList.add('hidden');
+            document.getElementById('screen-usagi').classList.add('hidden');
+
+            document.getElementById(screenId).classList.remove('hidden');
+
+            const header = document.getElementById('main-header');
+            if (screenId === 'screen-start') {
+                header.classList.add('hidden');
+            } else {
+                header.classList.remove('hidden');
+            }
+        }
+
+        // Voice Speech Synthesizer
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.6; // ゆっくり丁寧な音程
+            utterance.pitch = 1.1;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Audio Effects
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+
+            if (type === 'tap') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'correct') {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.2, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.25);
+                });
+            } else if (type === 'wrong') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.setValueAtTime(140, now + 0.12);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+        }
+
+        // Shuffle utility
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Add Star Points
+        function addStar() {
+            starCount++;
+            document.getElementById('star-count').textContent = starCount;
+            localStorage.setItem('katakana_drill_stars', starCount);
+        }
+
+        // --- KAME COURSE LOGIC ---
+        function startKameCourse() {
+            showScreen('screen-kame');
+            kameIndex = 0;
+            shuffleArray(singleCharData);
+            loadKameQuestion();
+        }
+
+        function loadKameQuestion() {
+            currentKameTarget = singleCharData[kameIndex % singleCharData.length];
+            document.getElementById('kame-hiragana').textContent = currentKameTarget.hiragana;
+            document.getElementById('kame-message-box').textContent = '';
+
+            // Generate choices (1 correct + 2 dummy)
+            const options = shuffleArray([
+                currentKameTarget.katakana,
+                currentKameTarget.dummy[0],
+                currentKameTarget.dummy[1]
+            ]);
+
+            const container = document.getElementById('kame-options-container');
+            container.innerHTML = '';
+
+            options.forEach(char => {
+                const btn = document.createElement('button');
+                btn.className = 'h-20 bg-amber-200 hover:bg-amber-300 active:bg-amber-400 border-b-4 border-amber-500 rounded-2xl text-3xl font-black text-amber-950 shadow transition transform active:scale-95 flex items-center justify-center';
+                btn.textContent = char;
+                btn.onclick = () => checkKameAnswer(char);
+                container.appendChild(btn);
+            });
+
+            setTimeout(() => {
+                speakText(currentKameTarget.hiragana);
+            }, 200);
+        }
+
+        function checkKameAnswer(selectedChar) {
+            const msgBox = document.getElementById('kame-message-box');
+            if (selectedChar === currentKameTarget.katakana) {
+                playSound('correct');
+                addStar();
+                msgBox.textContent = '🎉 せいかい！ すごいね！';
+                msgBox.className = 'h-8 text-center text-xl font-bold text-emerald-600 animate-bounce';
+
+                setTimeout(() => {
+                    kameIndex++;
+                    loadKameQuestion();
+                }, 1400);
+            } else {
+                playSound('wrong');
+                msgBox.textContent = 'ざんねん！ もういちど えらぼう！';
+                msgBox.className = 'h-8 text-center text-lg font-bold text-rose-500 animate-shake';
+            }
+        }
+
+        // --- USAGI COURSE LOGIC ---
+        function startUsagiCourse() {
+            showScreen('screen-usagi');
+            usagiIndex = 0;
+            shuffleArray(wordData);
+            loadUsagiQuestion();
+        }
+
+        function loadUsagiQuestion() {
+            currentUsagiWord = wordData[usagiIndex % wordData.length];
+
+            document.getElementById('usagi-hiragana').textContent = currentUsagiWord.hiragana;
+            document.getElementById('usagi-emoji').textContent = currentUsagiWord.emoji;
+            document.getElementById('usagi-message-box').textContent = '';
+
+            usagiSelectedSlots = new Array(currentUsagiWord.katakana.length).fill(null);
+
+            let tilesObj = currentUsagiWord.katakana.map((char, index) => ({
+                id: `tile-${index}-${Date.now()}`,
+                char: char
+            }));
+
+            let scrambled = shuffleArray([...tilesObj]);
+            if (scrambled.length > 1 && scrambled.every((t, idx) => t.char === currentUsagiWord.katakana[idx])) {
+                scrambled.reverse();
+            }
+            usagiRemainingTiles = scrambled;
+
+            renderUsagiBoard();
+
+            setTimeout(() => {
+                speakText(currentUsagiWord.hiragana);
+            }, 200);
+        }
+
+        function renderUsagiBoard() {
+            const slotsContainer = document.getElementById('usagi-slots-container');
+            const sourceContainer = document.getElementById('usagi-source-container');
+
+            slotsContainer.innerHTML = '';
+            sourceContainer.innerHTML = '';
+
+            // Render Target Slots
+            usagiSelectedSlots.forEach((tile, index) => {
+                const slotEl = document.createElement('div');
+                slotEl.className = 'w-12 h-12 sm:w-14 sm:h-14 rounded-xl border-2 border-sky-300 bg-white/80 flex items-center justify-center relative shadow-inner';
+                
+                if (tile) {
+                    const btn = createTileButton(tile, true, index);
+                    slotEl.appendChild(btn);
+                } else {
+                    const dot = document.createElement('span');
+                    dot.className = 'text-sky-300 font-bold';
+                    dot.textContent = '□';
+                    slotEl.appendChild(dot);
+                }
+
+                slotsContainer.appendChild(slotEl);
+            });
+
+            // Render Source Tiles
+            usagiRemainingTiles.forEach(tile => {
+                const btn = createTileButton(tile, false);
+                sourceContainer.appendChild(btn);
+            });
+        }
+
+        function createTileButton(tile, isInSlot, slotIndex = -1) {
+            const btn = document.createElement('button');
+            btn.className = `w-12 h-12 sm:w-14 sm:h-14 rounded-xl font-black text-xl sm:text-2xl flex items-center justify-center card-shadow transition transform active:scale-90 ${
+                isInSlot 
+                    ? 'bg-sky-200 border-b-2 border-sky-500 text-sky-950' 
+                    : 'bg-amber-300 border-b-2 border-amber-500 text-amber-950'
+            }`;
+            btn.textContent = tile.char;
+
+            btn.onclick = () => {
+                playSound('tap');
+                if (isInSlot) {
+                    usagiSelectedSlots[slotIndex] = null;
+                    usagiRemainingTiles.push(tile);
+                } else {
+                    const emptyIdx = usagiSelectedSlots.findIndex(s => s === null);
+                    if (emptyIdx !== -1) {
+                        usagiSelectedSlots[emptyIdx] = tile;
+                        usagiRemainingTiles = usagiRemainingTiles.filter(t => t.id !== tile.id);
+                    }
+                }
+                renderUsagiBoard();
+            };
+
+            return btn;
+        }
+
+        function resetUsagiWord() {
+            playSound('tap');
+            loadUsagiQuestion();
+        }
+
+        function checkUsagiAnswer() {
+            const msgBox = document.getElementById('usagi-message-box');
+
+            if (usagiSelectedSlots.some(s => s === null)) {
+                msgBox.textContent = 'カタカナ を ぜんぶ ならべてね！';
+                msgBox.className = 'h-6 text-center text-base font-bold text-amber-700 animate-shake';
+                playSound('wrong');
+                return;
+            }
+
+            const userWord = usagiSelectedSlots.map(s => s.char).join('');
+            const targetWord = currentUsagiWord.katakana.join('');
+
+            if (userWord === targetWord) {
+                playSound('correct');
+                addStar();
+                msgBox.textContent = '🎉 すごい！ せいかい！ 🎉';
+                msgBox.className = 'h-6 text-center text-lg font-black text-emerald-600 animate-bounce';
+
+                setTimeout(() => {
+                    usagiIndex++;
+                    loadUsagiQuestion();
+                }, 1600);
+            } else {
+                playSound('wrong');
+                msgBox.textContent = 'ざんねん！ もういちど かんがえてみよう！';
+                msgBox.className = 'h-6 text-center text-base font-bold text-rose-500 animate-shake';
+            }
+        }
+
+        // On Page Load
+        window.onload = function() {
+            const savedStars = localStorage.getItem('katakana_drill_stars');
+            if (savedStars !== null) {
+                starCount = parseInt(savedStars, 10) || 0;
+                document.getElementById('star-count').textContent = starCount;
+            }
+        };
+    </script>
+</body>
+</html>
